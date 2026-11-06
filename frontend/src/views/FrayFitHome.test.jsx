@@ -7,8 +7,10 @@ import { DEF, useStore } from '../store/useStore.js'
 import { startFlow, starterPlanSheet, bwSheet } from '../sheets.jsx'
 import FrayFitHome from './FrayFitHome.jsx'
 import FrayFitSidebar from '../components/FrayFitSidebar.jsx'
+import { openFrayFitPrograms } from '../components/FrayFitPrograms.jsx'
 
-vi.mock('../sheets.jsx', () => ({ startFlow: vi.fn(), starterPlanSheet: vi.fn(), bwSheet: vi.fn(), dayOverrideSheet: vi.fn() }))
+vi.mock('../sheets.jsx', () => ({ startFlow: vi.fn(), starterPlanSheet: vi.fn(), bwSheet: vi.fn(), dayOverrideSheet: vi.fn(), calendarSheet: vi.fn(), workoutDetailSheet: vi.fn() }))
+vi.mock('../components/FrayFitPrograms.jsx', () => ({ openFrayFitPrograms: vi.fn() }))
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
 let host, root, original
 const Location = () => <output data-location>{useLocation().pathname}</output>
@@ -33,7 +35,8 @@ describe('FrayFit home actions', () => {
     mount()
     expect(host.textContent).toContain('Ton entraînement, à ton rythme.')
     expect(host.textContent).toContain('Ta première séance lance ton historique.')
-    click('Choisir un programme'); expect(starterPlanSheet).toHaveBeenCalledOnce()
+    click('Choisir un programme'); expect(openFrayFitPrograms).toHaveBeenCalledOnce()
+    expect(host.textContent).toContain('Ton élan, jour après jour.')
     click('Enregistrer mon poids'); expect(bwSheet).toHaveBeenCalledOnce()
     click('Explorer les exercices'); expect(host.querySelector('[data-location]').textContent).toBe('/library')
     expect(useStore.getState().S.workouts).toEqual([])

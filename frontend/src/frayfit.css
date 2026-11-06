@@ -158,3 +158,19 @@
 @media (prefers-reduced-motion:reduce) {
   .frayfit-home *,.frayfit-sidebar *,.frayfit-login * { transition:none !important; }
 }
+
+/* Personal edition navigation and mobile identity; profile settings are never rewritten. */
+.frayfit-shell,.frayfit-shell .page { background:var(--ff-canvas); }
+.frayfit-mobile-brand { display:none; }
+.frayfit-header-actions { display:flex; flex-wrap:wrap; gap:10px; flex-shrink:0; }
+.frayfit-shell ~ #tabbar { --acc:#285de5; }
+.frayfit-shell ~ #tabbar .start .cir { background:#285de5; box-shadow:0 3px 16px #285de533; }
+.frayfit-shell ~ #tabbar .on { color:var(--ff-blue); }
+@media(max-width:999px) {
+ .frayfit-mobile-brand { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:6px 0 14px; border-bottom:1px solid var(--ff-line); margin-bottom:25px; }
+ .frayfit-mobile-brand > span { display:flex; align-items:center; gap:10px; font-size:23px; font-weight:750; letter-spacing:-.04em; }
+ .frayfit-mobile-brand > span .icn { color:var(--ff-blue); }
+ .frayfit-mobile-brand .btn { border:1px solid var(--ff-line); min-width:44px; }
+ .frayfit-header-actions { width:100%; }
+ .frayfit-home-header { flex-wrap:wrap; }
+}

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useStore } from '../store/useStore.js'
-import { bwSheet, dayOverrideSheet, startFlow, starterPlanSheet } from '../sheets.jsx'
+import { bwSheet, dayOverrideSheet, startFlow } from '../sheets.jsx'
+import { openFrayFitPrograms } from '../components/FrayFitPrograms.jsx'
+import FrayFitMomentum from '../components/FrayFitMomentum.jsx'
 import { frayfitHome } from '../lib/frayfit-home.js'
 import { exerciseNameText, fmtNum, isoOf } from '../lib/format.js'
 import { EXIDX } from '../lib/exercises.js'
@@ -37,7 +39,7 @@ function SessionPreview({ S, next, nav }) {
     </> : <div className="frayfit-welcome">
       <h3>{S.routines.length ? 'À toi de choisir le rythme.' : 'Ta première séance commence ici.'}</h3>
       <p>{S.routines.length ? 'Choisis une séance ou organise tes prochains entraînements.' : 'Pars d’un programme existant ou compose le tien avec tes exercices.'}</p>
-      <div className="frayfit-actions"><Button variant="primary" trailingIcon="chevronRight" onClick={S.routines.length ? () => nav('/workout') : starterPlanSheet}>{S.routines.length ? 'Choisir une séance' : 'Choisir un programme'}</Button><Button variant="ghost" onClick={() => nav('/plan')}>{S.routines.length ? 'Organiser ma semaine' : 'Créer mon programme'}</Button></div>
+      <div className="frayfit-actions"><Button variant="primary" trailingIcon="chevronRight" onClick={S.routines.length ? () => nav('/workout') : openFrayFitPrograms}>{S.routines.length ? 'Choisir une séance' : 'Choisir un programme'}</Button><Button variant="ghost" onClick={() => nav('/plan')}>{S.routines.length ? 'Organiser ma semaine' : 'Créer mon programme'}</Button></div>
     </div>}
   </section>
 }
@@ -57,9 +59,10 @@ export default function FrayFitHome() {
   const weight = lastBW(S)
 
   return <main className="frayfit-home" lang="fr">
+    <div className="frayfit-mobile-brand"><span><Icon name="dumbbell" />FrayFit</span><Button variant="ghost" size="sm" onClick={() => nav('/settings')} aria-label="Mon compte"><Icon name="person" /></Button></div>
     <header className="frayfit-home-header">
       <div><h1>Ton entraînement, à ton rythme.</h1><p>Tes programmes, tes séances et ta progression, au même endroit.</p></div>
-      <Button className="frayfit-outline" onClick={() => nav('/workout')}>{S.active ? 'Ouvrir ma séance' : 'Nouvelle séance'}</Button>
+      <div className="frayfit-header-actions"><Button variant="primary" onClick={openFrayFitPrograms}>Programmes guidés</Button><Button className="frayfit-outline" onClick={() => nav('/workout')}>{S.active ? 'Ouvrir ma séance' : 'Nouvelle séance'}</Button></div>
     </header>
 
     <div className="frayfit-dashboard">
@@ -86,6 +89,7 @@ export default function FrayFitHome() {
         {S.showWeightCard !== false && <div className="frayfit-weight"><span>{weight ? `${fmtNum(weight.w)} ${S.unit} · ${dateLabel(weight.d)}` : 'Suis aussi ton poids au fil du temps.'}</span><Button size="sm" variant="ghost" onClick={() => bwSheet()}>{weight ? 'Actualiser mon poids' : 'Enregistrer mon poids'}</Button></div>}
       </section>
     </div>
+    <FrayFitMomentum S={S} today={today} />
     <footer className="frayfit-home-footer"><Link to="/home/details">Vue détaillée <Icon name="chevronRight" /></Link><a href="https://franckraymond.tech/">Retour au portfolio</a><a href="frayfit-credits.html">Crédits et licences</a></footer>
   </main>
 }
