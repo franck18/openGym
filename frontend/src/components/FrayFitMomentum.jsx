@@ -27,7 +27,7 @@ export default function FrayFitMomentum({ S, today }) {
       <div className="ff-activity-grid">{m.days.map(day => {
         const n = day.workouts.length, label = `${date(day.iso)} : ${n} séance${n === 1 ? '' : 's'}${day.future ? ', à venir' : ''}`
         return <button key={day.iso} data-day={day.iso} className={`ff-activity-day level-${Math.min(n, 3)}${day.today ? ' is-today' : ''}`} title={label} aria-label={label} aria-current={day.today ? 'date' : undefined} disabled={day.future}
-          onClick={() => n === 1 ? workoutDetailSheet(day.workouts[0]) : calendarSheet(day.iso)}><span className="sr-only">{label}</span></button>
+          onClick={() => n === 1 ? workoutDetailSheet(day.workouts[0]) : calendarSheet(day.iso)}></button>
       })}</div>
     </div>
     <div className="ff-activity-legend"><span><Icon name="calendar" />Sélectionne un jour pour retrouver tes séances.</span><span>0 <i className="level-0" /><i className="level-1" /><i className="level-2" /><i className="level-3" />3+ séances</span></div>

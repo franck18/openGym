@@ -17,6 +17,8 @@ it('shows honest empty statistics and opens actual history days', () => {
     expect(host.textContent).toContain('Durée renseignée')
     expect(host.textContent).toContain('—')
     expect(host.querySelectorAll('.ff-activity-day')).toHaveLength(84)
+    expect(host.querySelector('.ff-activity-day').textContent).toBe('')
+    expect(host.querySelector('.ff-activity-day').getAttribute('aria-label')).toContain('séance')
     act(() => root.render(<FrayFitMomentum S={{ workouts: [workout] }} today="2026-11-06" />))
     act(() => host.querySelector('[data-day="2026-11-06"]').click())
     expect(workoutDetailSheet).toHaveBeenCalledWith(workout)
