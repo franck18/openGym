@@ -16,7 +16,7 @@ Ne pas modifier les médias, les traductions du catalogue, les formats de donné
 2. [x] Nouvel accueil et navigation : FrayFitHome.jsx, FrayFitSidebar.jsx, frayfit.css, App.jsx et main.jsx ; fonctions réelles réutilisées via les interfaces existantes ; tests des états vides, de la reprise de séance et de la navigation. Propriétaire : agent interface. Ne pas modifier les fichiers de la tâche 1.
 3. [x] Intégrité du catalogue : inventaire et contrôle des fichiers et des références médias ; valider l'absence de changement de données, de licence ou de médias. Propriétaire : coordinateur.
 4. [x] Revue de chaque tâche puis revue globale, tests et build de production. Corriger les régressions importantes avant publication.
-5. [ ] Publier le code dans la branche personnelle GitHub et les assets de production dans l'instance existante. Conserver backend, domaine et données. Tester depuis le portfolio, sur mobile et ordinateur, sans compte Blitz.
+5. [x] Publier le code dans la branche personnelle GitHub et les assets de production dans l'instance existante. Conserver backend, domaine et données. Tester depuis le portfolio, sur mobile et ordinateur, sans compte Blitz.
 
 ## Risques à vérifier
 

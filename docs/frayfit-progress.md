@@ -25,3 +25,14 @@ Ruling : la totalité du contenu demandé est conservée dans un fork non commer
 - La suite exhaustive initiale a été interrompue pour contention des workers ; les tests nginx/sh ne sont pas exécutables nativement dans ce shell Windows. Les suites ciblées ont ensuite été exécutées avec deux workers et passent.
 - Les icônes PNG historiques restent en repli d’installation ; SVG FrayFit prioritaire. Les écrans historiques gardent leurs traductions et préférences.
 - Captures de l’interface : ../evidence/frayfit/. Aucune capture d’animation n’a été envoyée à un outil IA.
+
+
+## Publication vérifiée
+
+Version applicative `6e41d62dc6396640071f5ffe28897b28bd57c656` en ligne sur https://opengym.jsuisfray.prod.page/ ; revue conservée dans https://github.com/franck18/openGym/pull/1. La branche personnelle contient également le workflow officiel Blitz. Le même workflow manuel a été enregistré sur main pour sa découverte par GitHub Actions, sans fusion du code applicatif.
+
+ALLOW_GUEST=1 appliqué par redémarrage ; /api/config confirme allow_guest=true. INVITE_ONLY, RP_ID, ORIGIN, backend et stockage conservés. Accès invité local et profils synchronisés restent distincts.
+
+Vérifications anonymes : HTML et JavaScript accessibles sans session Blitz sur le domaine canonique et l’ancien alias ; titre FrayFit et CSP valides ; crédits et icône HTTP200 ; MP4/WebP HTTP200 avec les bons types MIME. Bibliothèque publique 5 632 exercices, recherche française 102 résultats, vidéo de développé couché aux haltères en lecture (readyState=4, 180×180). Parcours réel portfolio → menu Sport → FrayFit confirmé. Captures dans ../evidence/frayfit/.
+
+L’offre gratuite Blitz conserve son comportement de veille après inactivité ; une visite réveille l’app. Aucun abonnement payant n’a été souscrit.
