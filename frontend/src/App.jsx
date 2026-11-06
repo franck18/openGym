@@ -8,7 +8,7 @@ import { setWeightDecimals } from './lib/format.js'
 import { accentValue, applyAccent } from './lib/accent.js'
 import { seasonAccent } from './lib/seasonal.js'
 import { setLang, useLang, baseLang } from './lib/i18n.js'
-import { effectiveLang } from './lib/default-lang.js'
+import { frayfitLanguage } from './lib/frayfit-language.js'
 import { setPlayOnSilent, setVibrate, setAlarmBuzzer, setNativeBuzzer } from './lib/sound.js'
 import { buzzAsAlarm } from './lib/rest-alert.js'
 import { setNav, notePath, keyBefore, navToWorkout } from './lib/nav.js'
@@ -31,6 +31,7 @@ import { MOBILE, nativePlatform } from './lib/mobile.js'
 import { exitWorkoutEdit, startFlow, beginWorkout } from './sheets.jsx'
 import Icon from './components/Icon.jsx'
 import TabBar from './components/TabBar.jsx'
+import FrayFitSidebar from './components/FrayFitSidebar.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import Modals from './components/Modals.jsx'
 import Toast from './components/Toast.jsx'
@@ -44,6 +45,7 @@ import Login from './views/Login.jsx'
 import MobileOnboarding from './views/MobileOnboarding.jsx'
 import PermissionSteps from './views/PermissionSteps.jsx'
 import Home from './views/Home.jsx'
+import FrayFitHome from './views/FrayFitHome.jsx'
 import Plan from './views/Plan.jsx'
 import Workout from './views/Workout.jsx'
 
@@ -160,7 +162,7 @@ function Shell() {
   // A profile that never picked a language follows the instance default or the browser (#303) —
   // worked out here, on this device, and never written into the synced state (lib/default-lang.js).
   const config = useStore(s => s.config)
-  const lang = effectiveLang(S, config)
+  const lang = frayfitLanguage(S, config)
   useEffect(() => { setLang(lang, S.enParens?.[baseLang(lang)] ?? true, S.enOnly?.[baseLang(lang)] === true) }, [lang, S.enParens, S.enOnly])
   // Same shape as the language: a module-level display setting, pushed when it changes (#139).
   useEffect(() => { setWeightDecimals(S.wdec) }, [S.wdec])
@@ -290,7 +292,8 @@ function Shell() {
 
   const view = l => (!authed ? <Login /> : needsMobileOnboarding ? <MobileOnboarding /> : permSteps ? <PermissionSteps /> : (
     <Routes location={l}>
-      <Route path="/home" element={<Home />} />
+      <Route path="/home" element={<FrayFitHome />} />
+      <Route path="/home/details" element={<Home />} />
       {/* Gym check-in — switched off in Settings, the route falls through to the
           catch-all redirect below. */}
       {S.checkIn !== false && <Route path="/checkin" element={<CheckIn />} />}
@@ -326,7 +329,8 @@ function Shell() {
           is under way the page it goes back to sits underneath (Page `under`), and as the swipe
           lands it simply stays: same key, same parent, so React keeps it instead of mounting
           the route again. */}
-      <div id="app">
+      {authed && !noTabs && <FrayFitSidebar />}
+      <div id="app" className={authed && !noTabs ? 'frayfit-shell' : !authed ? 'frayfit-auth-shell' : undefined}>
         <Page key={loc.pathname} loc={loc} render={view} motion={pageMotion(pathRef.current, loc.pathname, navType)} />
         {showPreview && <Page key={preview} loc={previewLoc(preview)} render={view} under scrollY={scrollPositions.get(preview) || 0} />}
       </div>
