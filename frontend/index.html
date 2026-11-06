@@ -16,49 +16,61 @@
   // Boot watchdog. A chunk this browser cannot parse (1.4.2's regex lookbehind on iOS 15.5 to
   // 16.3) kills the module graph before any of the app runs, and the logo lifted forever. Here,
   // outside the bundle and in plain old syntax, so it still runs then: a script that fails to
-  // load or parse, or no app after 10 s, puts the reason and a Reload button where the logo was.
-  // English only, as the packs are in the bundle that did not load. lib/boot.js removes #boot
+  // load or parse puts the reason where the logo was. The API can validly wait 20 s each for
+  // config and the session, especially when the host wakes up: 10 s is a quiet progress message,
+  // not a failure. After 50 s offer recovery outside the module graph. lib/boot.js removes #boot
   // (message included) once the app draws, so a slow start that gets there still gets there.
   (function () {
-    var shown = false, last = '';
-    function fail(title, detail) {
+    var failed = false, last = '';
+    function show(title, detail, failure) {
       var b = document.getElementById('boot');
       // Too early for the boot screen (a script in <head>): say it once the page is there.
-      if (!b && document.readyState === 'loading') return document.addEventListener('DOMContentLoaded', function () { fail(title, detail); });
-      if (shown || !b || b.getAttribute('data-leaving')) return;
-      shown = true;
-      b.className = 'fail';
+      if (!b && document.readyState === 'loading') return document.addEventListener('DOMContentLoaded', function () { show(title, detail, failure); });
+      if (failed || !b || b.getAttribute('data-leaving')) return;
+      failed = failure;
+      b.className = failure ? 'fail' : 'waiting';
       b.removeAttribute('aria-hidden');
-      b.setAttribute('role', 'alert');
+      b.setAttribute('role', failure ? 'alert' : 'status');
       b.setAttribute('dir', 'ltr');
+      b.setAttribute('lang', 'fr');
       b.innerHTML = '';
       var box = document.createElement('div'), h = document.createElement('p'), p = document.createElement('p');
       h.className = 'h';
       h.textContent = title;
-      p.textContent = 'Reloading often helps. If it keeps happening, please send us this:';
-      var c = document.createElement('code');
-      c.textContent = (detail || 'No error, it just never finished loading.') + ' (' + navigator.userAgent + ')';
+      p.textContent = failure ? 'Réessayez, ou réparez le démarrage. Vos données sont conservées.' : 'Le serveur peut mettre quelques instants à se réveiller. Vos données sont conservées.';
+      box.appendChild(h); box.appendChild(p);
+      if (failure) {
+        var c = document.createElement('code');
+        c.textContent = (detail || 'Le chargement n’a pas encore abouti.') + ' (' + navigator.userAgent + ')';
+        box.appendChild(c);
+      }
       var r = document.createElement('button');
       r.type = 'button';
-      r.textContent = 'Reload';
+      r.textContent = 'Réessayer';
       r.onclick = function () { location.reload(); };
-      box.appendChild(h); box.appendChild(p); box.appendChild(c); box.appendChild(r);
+      var repair = document.createElement('a');
+      repair.href = 'frayfit-repair.html';
+      repair.textContent = 'Réparer le démarrage';
+      box.appendChild(r); box.appendChild(repair);
       b.appendChild(box);
     }
     window.addEventListener('error', function (e) {
       var t = e && e.target;
-      if (t && t.tagName === 'SCRIPT') return fail('FrayFit could not start on this browser.', 'Could not load ' + (t.src || 'a script'));
+      if (t && t.tagName === 'SCRIPT') return show('FrayFit ne peut pas démarrer.', 'Chargement impossible : ' + (t.src || 'un script'), true);
       if (!e || !e.message) return;
       last = e.message + (e.filename ? ' at ' + e.filename.split('/').pop() + ':' + e.lineno : '');
-      if (/SyntaxError|Unexpected|Invalid regular expression/i.test(e.message)) fail('FrayFit could not start on this browser.', last);
+      if (/SyntaxError|Unexpected|Invalid regular expression/i.test(e.message)) show('FrayFit ne peut pas démarrer.', last, true);
     }, true);
     window.addEventListener('unhandledrejection', function (e) {
       var r = e && e.reason;
       if (r) last = String((r && r.message) || r);
     });
     setTimeout(function () {
-      fail(last ? 'FrayFit could not start on this browser.' : 'FrayFit is taking too long to start.', last);
+      show('FrayFit se réveille…', '', false);
     }, 10000);
+    setTimeout(function () {
+      show(last ? 'FrayFit ne peut pas démarrer.' : 'La connexion prend plus de temps que prévu.', last, true);
+    }, 50000);
   })();
 </script>
 <title>FrayFit</title>
@@ -97,11 +109,12 @@
   @keyframes boot-plate-r{from{transform:translateX(40px);opacity:0}}
   @keyframes boot-rep{50%{transform:translateY(-26px)}}
   @keyframes boot-shadow{50%{transform:scaleX(.72);opacity:.05}}
-  #boot.fail{place-items:center;padding:24px}
-  #boot.fail div{max-width:340px;font:15px/1.4 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;color:#172338;text-align:center}
-  #boot.fail .h{font-size:19px;font-weight:600;margin:0 0 8px}
+  #boot.fail,#boot.waiting{place-items:center;padding:24px}
+  #boot.fail div,#boot.waiting div{max-width:340px;font:15px/1.4 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;color:#172338;text-align:center}
+  #boot.fail .h,#boot.waiting .h{font-size:19px;font-weight:600;margin:0 0 8px}
   #boot.fail code{display:block;margin:14px 0 18px;padding:10px;border-radius:10px;background:#e9edf5;color:#172338;font-size:12px;text-align:left;word-break:break-word;-webkit-user-select:text;user-select:text}
-  #boot.fail button{font:inherit;font-weight:600;color:#ffffff;background:#285de5;border:0;border-radius:12px;min-height:44px;padding:0 28px}
+  #boot.fail button,#boot.waiting button{font:inherit;font-weight:600;color:#ffffff;background:#285de5;border:0;border-radius:12px;min-height:44px;padding:0 28px}
+  #boot.fail a,#boot.waiting a{display:block;margin-top:12px;padding:12px;color:#285de5;font-weight:600}
   @media (prefers-reduced-motion:reduce){
     #boot .bar,#boot .pl,#boot .pr,#boot ellipse{animation:none}
     #boot .db{animation:boot-breathe 1.6s ease-in-out infinite}

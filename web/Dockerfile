@@ -77,7 +77,20 @@ COPY --chmod=755 web/05-check-base-path.sh /docker-entrypoint.d/
 COPY --from=build /app/frontend/dist /usr/share/nginx/html
 # The exercise stills and animations, 180 px, licensed from Gym visual for openGym only: see
 # catalogue/media/NOTICE.md. They ship inside the image; nothing is downloaded at start-up.
-COPY catalogue/media/ /usr/share/nginx/html/exercise-media/
+# Keep each immutable media layer comfortably below the public registry's upload cap.
+# The complete files and paths stay identical; a single ~190 MiB layer is rejected with HTTP 413.
+COPY catalogue/media/NOTICE.md /usr/share/nginx/html/exercise-media/
+COPY catalogue/media/still/ /usr/share/nginx/html/exercise-media/still/
+COPY catalogue/media/clip/0*.mp4 /usr/share/nginx/html/exercise-media/clip/
+COPY catalogue/media/clip/1*.mp4 /usr/share/nginx/html/exercise-media/clip/
+COPY catalogue/media/clip/2*.mp4 /usr/share/nginx/html/exercise-media/clip/
+COPY catalogue/media/clip/3*.mp4 /usr/share/nginx/html/exercise-media/clip/
+COPY catalogue/media/clip/4*.mp4 /usr/share/nginx/html/exercise-media/clip/
+COPY catalogue/media/clip/5*.mp4 /usr/share/nginx/html/exercise-media/clip/
+COPY catalogue/media/clip/6*.mp4 /usr/share/nginx/html/exercise-media/clip/
+COPY catalogue/media/clip/7*.mp4 /usr/share/nginx/html/exercise-media/clip/
+COPY catalogue/media/clip/8*.mp4 /usr/share/nginx/html/exercise-media/clip/
+COPY catalogue/media/clip/9*.mp4 /usr/share/nginx/html/exercise-media/clip/
 
 # Set Default ENVs for nginx
 ENV NGINX_PORT=80
@@ -107,7 +120,7 @@ ENV MEDIA_UPLOAD_MAX=48m
 # chose, an Ollama on their LAN included, and the update check asks GitHub. Behind a proxy that
 # injects a script of its own (analytics), set this to a policy that allows it, or to
 # "frame-ancestors 'none'" for the old header.
-ENV CONTENT_SECURITY_POLICY="default-src 'self'; script-src 'self' 'sha256-vDoStg5E8/PhGpgOu6vO2HeOJWP3wDSBpw6WWPbUsAk='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data:; connect-src 'self' https: http:; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+ENV CONTENT_SECURITY_POLICY="default-src 'self'; script-src 'self' 'sha256-Y1JPiLcugXsQ8CeNShLnyTD0RSm3097YR8/Pu2TMiqU='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data:; connect-src 'self' https: http:; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
 
 # Probe the port nginx was actually told to listen on (NGINX_PORT is configurable, so a
 # hardcoded http://localhost/ breaks on any instance that changed it), and address it as
