@@ -13,6 +13,38 @@ import { passwordOn, PasswordRegisterForm, openPasswordSignIn } from '../compone
 import { openDeviceLinkRedeem } from '../components/Passkeys.jsx'
 import { openLostAccess } from '../components/LostAccess.jsx'
 
+function FrayFitLoginLayout({ children }) {
+  return <div className="frayfit-login">
+    <section className="frayfit-login-story" lang="fr" aria-labelledby="frayfit-welcome">
+      <a className="frayfit-login-brand" href="https://franckraymond.tech/" aria-label="FrayFit — retour au site de Franck Raymond">
+        <img src="./frayfit-icon.svg" alt="" width="48" height="48" />
+        <span>FrayFit</span>
+      </a>
+      <p className="frayfit-login-eyebrow">LE RENDEZ-VOUS AVEC VOUS-MÊME</p>
+      <h1 id="frayfit-welcome">Votre entraînement,<br />à votre rythme.</h1>
+      <p>Un espace pour préparer vos séances, retrouver vos exercices et voir le chemin parcouru.</p>
+      <ul className="frayfit-login-features">
+        <li><Icon name="dumbbell" /><span>Tous les exercices et animations d’OpenGym</span></li>
+        <li><Icon name="calendar" /><span>Vos programmes, organisés selon votre semaine</span></li>
+        <li><Icon name="chart" /><span>Votre progression, séance après séance</span></li>
+      </ul>
+      <a href="https://franckraymond.tech/">← Retour au site</a>
+    </section>
+    <section className="frayfit-login-panel" aria-labelledby="frayfit-profile">
+      <p className="frayfit-login-eyebrow" lang="fr">VOTRE ESPACE PERSONNEL</p>
+      <h2 id="frayfit-profile" lang="fr">Bienvenue sur FrayFit</h2>
+      {children}
+    </section>
+    <footer className="frayfit-login-footer" lang="fr">
+      <p>FrayFit, version personnelle de Franck Raymond, basée sur OpenGym par Duarte Santos</p>
+      <nav aria-label="Informations et licences">
+        <a href="./frayfit-credits.html">À propos et crédits</a>
+        <a href="https://github.com/franck18/openGym/tree/codex/frayfit-personal" target="_blank" rel="noopener noreferrer">Code source · AGPL</a>
+      </nav>
+    </footer>
+  </div>
+}
+
 function RegisterSheet({ close }) {
   const { setUser, pushState, pullState, loadConfig } = useStore()
   const config = useStore(s => s.config)
@@ -76,17 +108,9 @@ export default function Login() {
     try { const u = await passkeyLogin(); setUser(u, { adopt: true }); await adoptProfile(askAddDeviceData); useUI.getState().toast(t('Welcome back, {0}', u.name)) }
     catch (e) { if (e.name !== 'NotAllowedError' && e.name !== 'AbortError') useUI.getState().toast(passkeyError(e, t('Sign-in failed'))) }
   }
-  const head = <>
-    <div style={{ fontSize: 54, display: 'flex', justifyContent: 'center', color: 'var(--acc)' }}><Icon name="dumbbell" /></div>
-    <h1 style={{ fontSize: 34, fontWeight: 700, letterSpacing: '-.028em', margin: '10px 0 4px' }}>openGym</h1>
-    <a href="https://franckraymond.tech/" style={{ display: 'inline-block', padding: '8px 0', color: 'var(--acc)' }}>← Retour au site</a>
-  </>
-  const wrap = { display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '78vh', textAlign: 'center' }
-
   // Demo build: no backend to sign in against — the only way in is the local guest profile.
   if (DEMO) return (
-    <div className="narrow" style={wrap}>
-      {head}
+    <FrayFitLoginLayout>
       <div className="muted" style={{ marginBottom: 30 }}>{t('Live demo. Everything stays in this browser.')}</div>
       <Button variant="primary" icon="play" onClick={() => setGuest(true)}>{t('Start the demo')}</Button>
       <div className="card small muted" style={{ textAlign: 'start', marginTop: 16 }}>
@@ -95,12 +119,11 @@ export default function Login() {
       <div className="dim small" style={{ marginTop: 22, lineHeight: 1.6 }}>
         <a href={REPO} target="_blank" rel="noopener">{t('Self-host it in a minute →')}</a>
       </div>
-    </div>
+    </FrayFitLoginLayout>
   )
 
   return (
-    <div className="narrow" style={wrap}>
-      {head}
+    <FrayFitLoginLayout>
       <div className="muted" style={{ marginBottom: 34 }}>{t('Your workouts. Your weights. Your profile.')}</div>
       {webauthnOK() ? <>
         <Button variant="primary" icon="fingerprint" onClick={signIn}>{t('Sign in with passkey')}</Button>
@@ -130,6 +153,6 @@ export default function Login() {
         : t("This browser doesn't support passkeys, and this instance requires an account. Try a browser or device with passkey support.")}</div>}
       {canGuest && <Button variant="ghost" className="dim" onClick={() => setGuest(true)}>{t('Continue without account')}</Button>}
       <div className="dim small" style={{ marginTop: 26, lineHeight: 1.5 }}>{pwOn ? t('Passkeys use {0}. A password works too, where passkeys do not.', bio()) : t('Passkeys use {0}. No passwords to remember.', bio())}<br />{t('Each profile keeps its own plan, workouts & body weight.')}</div>
-    </div>
+    </FrayFitLoginLayout>
   )
 }

@@ -1,10 +1,10 @@
 # Multi-stage: build the React app, then serve it with nginx.
-# Self-hosters never need Node locally — `docker compose up` builds everything.
+# Self-hosters never need Node locally â€” `docker compose up` builds everything.
 #
 # --platform=$BUILDPLATFORM pins the build stage to the host's native arch even when
 # cross-building for other targets (e.g. amd64 host building an arm64 image). The build
 # output (static JS/CSS/HTML) is arch-independent, so there's no reason to run it under
-# QEMU — and QEMU-emulated npm installs are known to corrupt esbuild/rollup's platform-
+# QEMU â€” and QEMU-emulated npm installs are known to corrupt esbuild/rollup's platform-
 # specific native binaries, which is what breaks `vite build` with unrelated-looking
 # module-resolution errors.
 FROM --platform=$BUILDPLATFORM node:22.23.4-alpine AS build
@@ -28,7 +28,7 @@ RUN APP_BUILD="$APP_BUILD" npm run build
 
 FROM nginxinc/nginx-unprivileged:1.30.6-alpine
 # Same reason as in api/Dockerfile: alpine fixes land faster than the nginx image is rebuilt.
-# The base's last instruction is USER 101, and apk then exits 99 — it cannot open its log as
+# The base's last instruction is USER 101, and apk then exits 99 â€” it cannot open its log as
 # that user. Upgrade as root, then switch back. 101 has to be the last USER in this file so
 # the entrypoint and the nginx master both stay uid 101. It can bind port 80 under Docker,
 # which sets net.ipv4.ip_unprivileged_port_start=0; the base image's EXPOSE 8080 is metadata,
@@ -39,7 +39,7 @@ FROM nginxinc/nginx-unprivileged:1.30.6-alpine
 # recreate /var/cache/nginx as root, which is the mkdir a non-root master dies on. Restore
 # the layout the base established, still as root, and idempotently: drop a user directive
 # if one is present, point pid at /tmp/nginx.pid, and insert the /tmp temp paths only when
-# client_body_temp_path is absent — a second insert duplicates them and nginx refuses the
+# client_body_temp_path is absent â€” a second insert duplicates them and nginx refuses the
 # config. chown/chmod cover /var/cache/nginx and /etc/nginx only, so uid 101 can render the
 # template. The static tree keeps the default modes; uid 101 only reads it.
 USER root
@@ -60,7 +60,7 @@ ARG BUILD_DATE=unknown
 
 LABEL maintainer="Duarte Santos https://github.com/DuarteSantos8" \
     org.opencontainers.image.title="opengym-web" \
-    org.opencontainers.image.description="Frontend for Self-hosted gym & body-weight tracker — plan routines, log workouts (supersets & cardio too), track your weight and progress, passkey login. Your data, your server." \
+    org.opencontainers.image.description="Frontend for Self-hosted gym & body-weight tracker â€” plan routines, log workouts (supersets & cardio too), track your weight and progress, passkey login. Your data, your server." \
     org.opencontainers.image.source="https://github.com/DuarteSantos8/openGym" \
     org.opencontainers.image.url="https://opengym.ch" \
     org.opencontainers.image.documentation="https://github.com/DuarteSantos8/openGym#readme" \
@@ -77,7 +77,20 @@ COPY --chmod=755 web/05-check-base-path.sh /docker-entrypoint.d/
 COPY --from=build /app/frontend/dist /usr/share/nginx/html
 # The exercise stills and animations, 180 px, licensed from Gym visual for openGym only: see
 # catalogue/media/NOTICE.md. They ship inside the image; nothing is downloaded at start-up.
-COPY catalogue/media/ /usr/share/nginx/html/exercise-media/
+# Keep each immutable media layer comfortably below the public registry's upload cap.
+# The complete files and paths stay identical; a single ~190 MiB layer is rejected with HTTP 413.
+COPY catalogue/media/NOTICE.md /usr/share/nginx/html/exercise-media/
+COPY catalogue/media/still/ /usr/share/nginx/html/exercise-media/still/
+COPY catalogue/media/clip/0*.mp4 /usr/share/nginx/html/exercise-media/clip/
+COPY catalogue/media/clip/1*.mp4 /usr/share/nginx/html/exercise-media/clip/
+COPY catalogue/media/clip/2*.mp4 /usr/share/nginx/html/exercise-media/clip/
+COPY catalogue/media/clip/3*.mp4 /usr/share/nginx/html/exercise-media/clip/
+COPY catalogue/media/clip/4*.mp4 /usr/share/nginx/html/exercise-media/clip/
+COPY catalogue/media/clip/5*.mp4 /usr/share/nginx/html/exercise-media/clip/
+COPY catalogue/media/clip/6*.mp4 /usr/share/nginx/html/exercise-media/clip/
+COPY catalogue/media/clip/7*.mp4 /usr/share/nginx/html/exercise-media/clip/
+COPY catalogue/media/clip/8*.mp4 /usr/share/nginx/html/exercise-media/clip/
+COPY catalogue/media/clip/9*.mp4 /usr/share/nginx/html/exercise-media/clip/
 
 # Set Default ENVs for nginx
 ENV NGINX_PORT=80
@@ -95,11 +108,11 @@ ENV RESOLVER=127.0.0.11
 ENV CF_CONNECTING_IP=""
 # Subpath deployments behind a reverse proxy that does NOT strip its prefix: "/gym", no trailing
 # slash. Empty (the default) serves the app at the root exactly as before. A proxy that strips
-# the prefix needs nothing here — the app derives the API address from its own URL.
+# the prefix needs nothing here â€” the app derives the API address from its own URL.
 ENV BASE_PATH=""
 # The largest upload nginx lets through to the API's photo and video route (nginx size syntax).
 # Above the API's own video cap (MEDIA_VIDEO_MAX_MB, 40 by default) so the API, which says why,
-# is the one that refuses a file — raise both together.
+# is the one that refuses a file â€” raise both together.
 ENV MEDIA_UPLOAD_MAX=48m
 # Sent on every page and file. Scripts run only from this origin, plus the one inline script in
 # frontend/index.html by its hash (src/lib/csp.test.js keeps the two in step). connect-src stays
@@ -107,7 +120,7 @@ ENV MEDIA_UPLOAD_MAX=48m
 # chose, an Ollama on their LAN included, and the update check asks GitHub. Behind a proxy that
 # injects a script of its own (analytics), set this to a policy that allows it, or to
 # "frame-ancestors 'none'" for the old header.
-ENV CONTENT_SECURITY_POLICY="default-src 'self'; script-src 'self' 'sha256-xUZtZS1nWJaAyUqA7ZKgkLhjdEisnY0MiRmax16aGFg='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data:; connect-src 'self' https: http:; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+ENV CONTENT_SECURITY_POLICY="default-src 'self'; script-src 'self' 'sha256-Y1JPiLcugXsQ8CeNShLnyTD0RSm3097YR8/Pu2TMiqU='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data:; connect-src 'self' https: http:; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
 
 # Probe the port nginx was actually told to listen on (NGINX_PORT is configurable, so a
 # hardcoded http://localhost/ breaks on any instance that changed it), and address it as

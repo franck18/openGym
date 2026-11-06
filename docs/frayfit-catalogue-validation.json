@@ -1,0 +1,10 @@
+{
+  "base": "549360eeae798619167f18d0dad1c2779fab3543",
+  "exercise_fiches": 6554,
+  "media_files": 13108,
+  "canonical_exercises": 5632,
+  "variant_aliases": 922,
+  "protected_content_git_diff_exit": 0,
+  "media_validation": "13108 files, all within 180x180",
+  "catalogue_build_check": "5632 exercises, generated files up to date"
+}

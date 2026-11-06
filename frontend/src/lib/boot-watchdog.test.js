@@ -35,17 +35,18 @@ const syntaxError = () => new ErrorEvent('error', {
 })
 
 describe('boot watchdog', () => {
-  it('replaces the logo with the reason and a Reload button when a chunk does not parse', () => {
+  it('replaces the logo with the reason and recovery controls when a chunk does not parse', () => {
     window.dispatchEvent(syntaxError())
     const b = boot()
     expect(b.className).toBe('fail')
     expect(b.querySelector('svg')).toBeNull()
     expect(b.getAttribute('role')).toBe('alert')
     expect(b.hasAttribute('aria-hidden')).toBe(false)
-    expect(b.textContent).toContain('openGym could not start on this browser.')
+    expect(b.textContent).toContain('FrayFit ne peut pas démarrer.')
     expect(b.querySelector('code').textContent).toContain('Invalid regular expression: invalid group specifier name at media-refs-CaxawJNr.js:1')
     const reload = b.querySelector('button')
-    expect(reload.textContent).toBe('Reload')
+    expect(reload.textContent).toBe('Réessayer')
+    expect(b.querySelector('a').getAttribute('href')).toBe('frayfit-repair.html')
     expect(b.textContent).not.toContain('—')
   })
 
@@ -56,25 +57,51 @@ describe('boot watchdog', () => {
     document.body.appendChild(s)
     s.dispatchEvent(new Event('error'))
     expect(boot().className).toBe('fail')
-    expect(boot().querySelector('code').textContent).toContain('Could not load https://gym.test/assets/index-B93PyrcZ.js')
+    expect(boot().querySelector('code').textContent).toContain('Chargement impossible : https://gym.test/assets/index-B93PyrcZ.js')
   })
 
-  it('ignores an image that failed to load, and an ordinary error until the 10 s are up', () => {
+  it('ignores an image error and reports an ordinary error at the hard deadline', () => {
     const img = document.createElement('img')
     document.body.appendChild(img)
     img.dispatchEvent(new Event('error'))
     window.dispatchEvent(new ErrorEvent('error', { message: "TypeError: undefined is not an object (evaluating 'a.b')", filename: 'https://gym.test/assets/x.js', lineno: 3 }))
     expect(boot().className).toBe('')
     vi.advanceTimersByTime(10000)
-    expect(boot().textContent).toContain('openGym could not start on this browser.')
+    expect(boot().getAttribute('role')).toBe('status')
+    vi.advanceTimersByTime(40000)
+    expect(boot().textContent).toContain('FrayFit ne peut pas démarrer.')
     expect(boot().querySelector('code').textContent).toContain("undefined is not an object (evaluating 'a.b') at x.js:3")
   })
 
-  it('says it is taking too long when nothing failed but the app never came', () => {
+  it('shows a quiet wake-up message at 10 s while two bounded API requests can still be pending', () => {
     vi.advanceTimersByTime(9999)
     expect(boot().querySelector('svg')).not.toBeNull()
     vi.advanceTimersByTime(1)
-    expect(boot().textContent).toContain('openGym is taking too long to start.')
+    expect(boot().textContent).toContain('FrayFit se réveille…')
+    expect(boot().className).toBe('waiting')
+    expect(boot().getAttribute('role')).toBe('status')
+    expect(boot().querySelector('code')).toBeNull()
+    vi.advanceTimersByTime(30000)
+    expect(boot().className).toBe('waiting')
+    expect(boot().querySelector('a').getAttribute('href')).toBe('frayfit-repair.html')
+  })
+
+  it('offers a safe repair at 50 s when the page never starts', () => {
+    vi.advanceTimersByTime(49999)
+    expect(boot().className).toBe('waiting')
+    vi.advanceTimersByTime(1)
+    expect(boot().className).toBe('fail')
+    expect(boot().getAttribute('role')).toBe('alert')
+    expect(boot().textContent).toContain('La connexion prend plus de temps que prévu.')
+    expect(boot().textContent).toContain('Vos données sont conservées.')
+    expect(boot().querySelector('a').getAttribute('href')).toBe('frayfit-repair.html')
+  })
+
+  it('still reports a syntax failure immediately after the soft wake-up message', () => {
+    vi.advanceTimersByTime(10000)
+    window.dispatchEvent(syntaxError())
+    expect(boot().className).toBe('fail')
+    expect(boot().querySelector('code').textContent).toContain('Invalid regular expression')
   })
 
   it('waits for the boot screen when the failure comes before the page is there', () => {
@@ -88,13 +115,21 @@ describe('boot watchdog', () => {
 
   it('stays quiet once the app has drawn', () => {
     hideBoot()
-    vi.advanceTimersByTime(10000)
+    vi.advanceTimersByTime(50000)
     window.dispatchEvent(syntaxError())
     expect(document.getElementById('boot')).toBeNull()
   })
 
   it('leaves the message to lib/boot.js, which takes it away once a slow start gets there', () => {
     vi.advanceTimersByTime(10000)
+    expect(boot().className).toBe('waiting')
+    hideBoot()
+    vi.advanceTimersByTime(1000)
+    expect(document.getElementById('boot')).toBeNull()
+  })
+
+  it('removes the hard-deadline message if the app eventually becomes ready', () => {
+    vi.advanceTimersByTime(50000)
     expect(boot().className).toBe('fail')
     hideBoot()
     vi.advanceTimersByTime(1000)

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <title>FrayFit</title>
+  <rect width="128" height="128" rx="30" fill="#285de5"/>
+  <g fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M33 48v32M45 40v48M83 40v48M95 48v32M45 64h38"/>
+  </g>
+</svg>

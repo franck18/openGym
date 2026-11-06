@@ -1,0 +1,176 @@
+/* FrayFit's original dashboard. Existing training controls keep their own theme preferences. */
+:root {
+  --ff-canvas:#101722; --ff-panel:#192331; --ff-card:#202d3e;
+  --ff-ink:#f0f4fc; --ff-muted:#b1bfd3; --ff-line:#34435a;
+  --ff-blue:#8eafff; --ff-primary:#285de5; --ff-selected:#253c6a;
+}
+:root[data-theme="light"] {
+  --bg:#fff;
+  --ff-canvas:#fff; --ff-panel:#f5f7fb; --ff-card:#fff;
+  --ff-ink:#172338; --ff-muted:#586a83; --ff-line:#d5dfef;
+  --ff-blue:#285de5; --ff-selected:#e8edff;
+}
+.frayfit-sidebar,.frayfit-home,.frayfit-login { color:var(--ff-ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+.frayfit-sidebar { display:none; }
+.frayfit-home { max-width:1400px; margin:auto; }
+.frayfit-home h1,.frayfit-login h1 { font-weight:750; letter-spacing:-.045em; line-height:1.12; }
+.frayfit-home h1 { font-size:clamp(30px,3vw,44px); }
+.frayfit-home-header { display:flex; justify-content:space-between; gap:24px; align-items:center; margin:16px 0 34px; }
+.frayfit-home-header p { font-size:16px; color:var(--ff-muted); line-height:1.6; margin-top:12px; }
+.frayfit-home .btn,.frayfit-login .btn { border-radius:10px; font-size:14px; font-weight:650; min-height:44px; padding:11px 17px; width:auto; }
+.frayfit-home .btn.primary,.frayfit-login .btn.primary { background:var(--ff-primary); color:#fff; }
+.frayfit-home .btn.primary:hover,.frayfit-login .btn.primary:hover { background:#204ec5; }
+.frayfit-home .btn.ghost { color:var(--ff-blue); }
+.frayfit-login .btn.ghost,.frayfit-login .btn.plain { color:var(--ff-blue); }
+.frayfit-login .muted,.frayfit-login .dim { color:var(--ff-muted); }
+.frayfit-home .frayfit-outline { border:1px solid var(--ff-blue); background:var(--ff-canvas); color:var(--ff-blue); flex:none; }
+.frayfit-home a,.frayfit-sidebar a,.frayfit-login a { color:var(--ff-blue); }
+.frayfit-home a:focus-visible,.frayfit-sidebar a:focus-visible,.frayfit-login a:focus-visible,.frayfit-week-days button:focus-visible { outline:3px solid var(--ff-blue); outline-offset:4px; }
+.frayfit-dashboard { display:grid; grid-template-columns:minmax(0,1.45fr) minmax(0,1fr); gap:24px; align-items:stretch; }
+.frayfit-panel { padding:24px; border:1px solid var(--ff-line); border-radius:16px; background:var(--ff-panel); min-width:0; }
+.frayfit-panel h2 { font-size:25px; font-weight:750; letter-spacing:-.035em; line-height:1.2; margin:0; }
+.frayfit-panel h3 { font-size:22px; font-weight:700; letter-spacing:-.025em; line-height:1.3; overflow-wrap:anywhere; }
+.frayfit-panel p { color:var(--ff-muted); font-size:15px; line-height:1.55; }
+.frayfit-session-heading { display:flex; align-items:center; justify-content:space-between; gap:18px; margin:30px 0 22px; flex-wrap:wrap; }
+.frayfit-session-heading p { margin-top:5px; }
+.frayfit-session-heading .btn { flex:none; }
+.frayfit-exercise-list { list-style:none; }
+.frayfit-exercise-list li { display:flex; justify-content:space-between; gap:20px; padding:12px 0; border-bottom:1px solid var(--ff-line); font-size:15px; font-weight:600; line-height:1.45; }
+.frayfit-exercise-list li:last-child { border-bottom:0; }
+.frayfit-exercise-list li span:first-child { overflow-wrap:anywhere; }
+.frayfit-exercise-list li span:last-child { color:var(--ff-muted); white-space:nowrap; font-weight:450; }
+.frayfit-more { margin-top:8px; }
+.frayfit-welcome { padding:34px 0 16px; }
+.frayfit-welcome p { margin:12px 0 24px; max-width:420px; }
+.frayfit-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.frayfit-week-range { margin:10px 0 24px; }
+.frayfit-week-days { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:7px; }
+.frayfit-week-days button { min-height:82px; display:flex; flex-direction:column; align-items:center; gap:9px; font-size:13px; font-weight:600; color:var(--ff-ink); cursor:pointer; border-radius:8px; }
+.frayfit-week-days strong { display:grid; place-items:center; width:100%; min-height:39px; border:1px solid var(--ff-line); border-radius:9px; background:var(--ff-card); font-size:17px; font-weight:600; }
+.frayfit-week-days .is-today strong { background:var(--ff-primary); border-color:var(--ff-primary); color:white; }
+.frayfit-week-days i { width:5px; height:5px; border-radius:100%; background:transparent; }
+.frayfit-week-days i.planned { background:var(--ff-muted); }
+.frayfit-week-days i.done { background:var(--ff-blue); width:7px; height:7px; }
+.frayfit-week-metrics { display:grid; grid-template-columns:1fr 1fr 1.25fr; margin-top:24px; padding-top:24px; border-top:1px solid var(--ff-line); }
+.frayfit-week-metrics > div { padding:0 15px; border-right:1px solid var(--ff-line); min-width:0; }
+.frayfit-week-metrics > div:first-child { padding-left:0; }
+.frayfit-week-metrics > div:last-child { border:0; padding-right:0; }
+.frayfit-week-metrics dt { font-size:14px; font-weight:500; }
+.frayfit-week-metrics dd { font-size:clamp(23px,2.4vw,34px); font-weight:750; line-height:1.25; margin-top:10px; letter-spacing:-.04em; overflow-wrap:anywhere; }
+.frayfit-week-metrics small { font-size:14px; font-weight:600; letter-spacing:0; }
+.frayfit-section-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:24px; }
+.frayfit-section-heading a,.frayfit-progress a,.frayfit-home-footer a { display:inline-flex; align-items:center; gap:7px; font-size:14px; font-weight:600; }
+.frayfit-section-heading a { white-space:nowrap; }
+.frayfit-routines { display:grid; gap:14px; }
+.frayfit-routines > a { display:flex; align-items:center; justify-content:space-between; gap:16px; border:1px solid var(--ff-line); border-radius:12px; padding:16px; background:var(--ff-card); color:var(--ff-ink); text-decoration:none; transition:border-color 140ms ease; }
+.frayfit-routines > a:hover { border-color:var(--ff-blue); }
+.frayfit-routines h3 { font-size:19px; }
+.frayfit-routines p { margin-top:4px; font-size:14px; }
+.frayfit-routine-arrow { border:1px solid var(--ff-line); width:40px; height:40px; border-radius:10px; display:grid; place-items:center; flex:none; }
+.frayfit-programs-empty { min-height:190px; display:flex; flex-direction:column; gap:16px; align-items:flex-start; justify-content:center; }
+.frayfit-programs-empty > .icn { font-size:32px; color:var(--ff-muted); }
+.frayfit-programs-empty p { color:var(--ff-ink); font-size:19px; }
+.frayfit-programs-empty .btn { padding-left:0; }
+.frayfit-progress-content { min-height:200px; padding:28px 0 20px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:18px; }
+.frayfit-progress-content p { max-width:280px; color:var(--ff-ink); font-size:17px; }
+.frayfit-progress-icon { width:58px; height:58px; border:1.5px solid var(--ff-muted); border-radius:12px; display:grid; place-items:center; color:var(--ff-muted); }
+.frayfit-progress-icon .icn { font-size:40px; }
+.frayfit-progress-total { font-size:42px; font-weight:750; letter-spacing:-.04em; line-height:1.1; }
+.frayfit-progress-total span { display:block; font-size:14px; color:var(--ff-muted); font-weight:450; letter-spacing:0; margin-top:6px; }
+.frayfit-weight { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:4px 12px; border-top:1px solid var(--ff-line); padding-top:12px; font-size:12px; color:var(--ff-muted); }
+.frayfit-weight .btn { padding-left:0; padding-right:0; font-size:12px; }
+.frayfit-home-footer { display:flex; gap:18px; flex-wrap:wrap; margin-top:24px; padding-bottom:12px; }
+.frayfit-home-footer a { color:var(--ff-muted); font-size:12px; min-height:32px; }
+
+/* The sign-in surface uses the same white/slate/cobalt system. */
+#app.frayfit-auth-shell { max-width:1180px; padding:calc(var(--sat) + var(--conn) + 40px) 32px 32px; }
+.frayfit-login { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(320px,1fr); align-items:center; gap:48px 64px; min-height:calc(100dvh - 90px); }
+.frayfit-login-brand { display:inline-flex; align-items:center; gap:12px; text-decoration:none; font-weight:750; font-size:28px; letter-spacing:-.04em; color:var(--ff-ink) !important; margin-bottom:56px; }
+.frayfit-login-brand img { width:42px; height:42px; }
+.frayfit-login-eyebrow { font-size:10px; font-weight:700; letter-spacing:.15em; color:var(--ff-blue); margin-bottom:18px; }
+.frayfit-login h1 { font-size:clamp(34px,4vw,52px); margin-bottom:22px; }
+.frayfit-login-story > p:not(.frayfit-login-eyebrow) { max-width:440px; font-size:17px; line-height:1.65; color:var(--ff-muted); }
+.frayfit-login-features { display:grid; gap:20px; margin:32px 0 40px; padding:0; list-style:none; font-size:14px; }
+.frayfit-login-features li { display:flex; align-items:center; gap:12px; }
+.frayfit-login-features .icn { color:var(--ff-blue); font-size:23px; flex:none; }
+.frayfit-login-story > a:last-child { font-size:14px; }
+.frayfit-login-panel { padding:32px; border:1px solid var(--ff-line); border-radius:18px; background:var(--ff-panel); }
+.frayfit-login-panel h2 { font-size:27px; letter-spacing:-.035em; font-weight:750; margin-bottom:20px; }
+.frayfit-login-panel > .btn { width:100%; }
+.frayfit-login-footer { grid-column:1/-1; border-top:1px solid var(--ff-line); padding-top:20px; font-size:11px; line-height:1.7; color:var(--ff-muted); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px 24px; }
+.frayfit-login-footer nav { display:flex; flex-wrap:wrap; gap:20px; }
+
+@media (min-width:1000px) {
+  .frayfit-sidebar { position:fixed; inset:0 auto 0 0; z-index:30; width:220px; display:flex; flex-direction:column; padding:32px 16px 20px; background:var(--ff-panel); border-right:1px solid var(--ff-line); overflow-y:auto; }
+  .frayfit-brand { display:flex; align-items:center; gap:12px; padding:0 10px; color:var(--ff-ink) !important; font-weight:750; font-size:25px; letter-spacing:-.04em; text-decoration:none; }
+  .frayfit-brand .icn { color:var(--ff-blue); font-size:31px; }
+  .frayfit-sidebar nav { display:grid; gap:7px; margin-top:42px; }
+  .frayfit-sidebar nav a,.frayfit-sidebar-footer > a { display:flex; align-items:center; gap:13px; padding:13px 12px; min-height:46px; border-radius:10px; color:var(--ff-ink); text-decoration:none; font-size:14px; font-weight:500; }
+  .frayfit-sidebar nav a .icn,.frayfit-sidebar-footer > a .icn { font-size:21px; flex:none; }
+  .frayfit-sidebar nav a.is-active { background:var(--ff-selected); color:var(--ff-blue); font-weight:650; }
+  .frayfit-sidebar nav a:hover,.frayfit-sidebar-footer > a:hover { background:var(--ff-selected); }
+  .frayfit-sidebar-footer { margin-top:auto; padding-top:28px; }
+  .frayfit-sidebar-footer > a:first-child { border-top:1px solid var(--ff-line); border-radius:0; padding-top:22px; }
+  .frayfit-sidebar-footer > a { font-size:12px; }
+  .frayfit-source-links { display:flex; gap:16px; padding:12px; font-size:11px; }
+  .frayfit-sidebar-footer p { font-size:9px; padding:0 12px; color:var(--ff-muted); line-height:1.5; }
+  #app.frayfit-shell { max-width:none; margin-left:220px; padding:calc(var(--conn) + 32px) 32px 48px; }
+  #app.frayfit-shell > .page.under { left:220px; }
+  .frayfit-shell ~ #tabbar { display:none; }
+  .frayfit-home-header { margin-top:0; margin-bottom:48px; align-items:flex-start; }
+  .frayfit-home-header > .btn { margin-top:8px; }
+}
+@media (min-width:1400px) {
+  #app.frayfit-shell { padding-left:40px; padding-right:40px; }
+  .frayfit-panel { padding:26px; }
+  .frayfit-dashboard { gap:26px; }
+}
+@media (max-width:1199px) {
+  .frayfit-dashboard { grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:18px; }
+  .frayfit-panel { padding:20px; }
+  .frayfit-panel h2 { font-size:23px; }
+}
+@media (max-width:999px) {
+  .frayfit-dashboard { grid-template-columns:minmax(0,1fr); gap:16px; }
+  .frayfit-home-header { flex-direction:column; align-items:flex-start; gap:18px; margin:20px 0 24px; }
+  .frayfit-home-header p { font-size:15px; }
+  .frayfit-session-heading { margin-top:26px; }
+  .frayfit-week-metrics dd { font-size:30px; }
+  .frayfit-login { gap:32px; grid-template-columns:minmax(0,1.1fr) minmax(280px,1fr); }
+  .frayfit-login-brand { margin-bottom:36px; }
+  .frayfit-login-panel { padding:24px; }
+}
+@media (max-width:700px) {
+  #app.frayfit-auth-shell { padding:calc(var(--sat) + var(--conn) + 28px) 20px 28px; }
+  .frayfit-login { grid-template-columns:1fr; min-height:0; }
+  .frayfit-login-brand { margin-bottom:30px; }
+  .frayfit-login h1 { font-size:37px; }
+  .frayfit-login-story > p:not(.frayfit-login-eyebrow) { font-size:15px; }
+  .frayfit-login-features { margin:24px 0; gap:14px; font-size:13px; }
+  .frayfit-login-panel { padding:24px 20px; }
+  .frayfit-login-panel h2 { font-size:25px; }
+  .frayfit-login-footer { font-size:10px; }
+}
+@media (prefers-contrast:more) {
+  :root { --ff-muted:#d2dced; --ff-line:#8191aa; }
+  :root[data-theme="light"] { --ff-muted:#354965; --ff-line:#788aa5; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .frayfit-home *,.frayfit-sidebar *,.frayfit-login * { transition:none !important; }
+}
+
+/* Personal edition navigation and mobile identity; profile settings are never rewritten. */
+.frayfit-shell,.frayfit-shell .page { background:var(--ff-canvas); }
+.frayfit-mobile-brand { display:none; }
+.frayfit-header-actions { display:flex; flex-wrap:wrap; gap:10px; flex-shrink:0; }
+.frayfit-shell ~ #tabbar { --acc:#285de5; }
+.frayfit-shell ~ #tabbar .start .cir { background:#285de5; box-shadow:0 3px 16px #285de533; }
+.frayfit-shell ~ #tabbar .on { color:var(--ff-blue); }
+@media(max-width:999px) {
+ .frayfit-mobile-brand { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:6px 0 14px; border-bottom:1px solid var(--ff-line); margin-bottom:25px; }
+ .frayfit-mobile-brand > span { display:flex; align-items:center; gap:10px; font-size:23px; font-weight:750; letter-spacing:-.04em; }
+ .frayfit-mobile-brand > span .icn { color:var(--ff-blue); }
+ .frayfit-mobile-brand .btn { border:1px solid var(--ff-line); min-width:44px; }
+ .frayfit-header-actions { width:100%; }
+ .frayfit-home-header { flex-wrap:wrap; }
+}
