@@ -10,7 +10,7 @@ const date = iso => new Date(iso + 'T12:00:00').toLocaleDateString('fr-FR', { we
 export default function FrayFitMomentum({ S, today }) {
   const m = useMemo(() => frayfitMomentum(S, new Date(today + 'T12:00:00')), [S.workouts, S.weekStart, today])
   const minutes = Math.floor(m.current.durationMs / 60000)
-  const duration = !m.current.timedSessions ? '—' : minutes >= 60 ? `${Math.floor(minutes / 60)} h ${minutes % 60} min` : `${minutes} min`
+  const duration = !m.current.timedSessions ? '–' : minutes >= 60 ? `${Math.floor(minutes / 60)} h ${minutes % 60} min` : `${minutes} min`
   const comparison = m.previous.sessions === 0
     ? m.current.sessions === 0 ? 'Ton point de départ' : 'Tes premières séances prennent forme'
     : `${m.change > 0 ? '+' : ''}${m.change} séance${Math.abs(m.change) === 1 ? '' : 's'} par rapport aux 28 jours précédents`
